@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.it.mapper.UserMapper">
+	<!-- 添加缓存 -->
+	<cache />
+	<!-- 保存 -->
+	<insert id="save">
+		INSERT INTO t_user( `name`, username, `password`,tel, `enable`, roleid)
+		VALUES (#{name},#{username},#{password},#{tel},#{enable},#{roleid})
+	</insert>
+	<!-- 根据id查找 -->
+	<select id="findById" resultType="User">
+		select id, name,password,
+		username, tel,
+		enable, roleid from t_user where id = #{id}
+
+	</select>
+	<!-- 更新user -->
+	<update id="updateUser">
+		UPDATE t_user
+		<set>
+			<if test="name != null and name != ''">
+				`name` = #{name},
+			</if>
+			<if test="username != null and username != ''">
+				`username` = #{username},
+			</if>
+			<if test="password != null and password != ''">
+				`password` = #{password},
+			</if>
+			<if test="tel != null and tel != ''">
+				tel = #{tel},
+			</if>
+			<if test="roleid != null and roleid != ''">
+				`roleid` = #{roleid},
+			</if>
+			`enable` = #{enable}
+		</set>
+		WHERE id = #{id}
+	</update>
+	<!-- 通过id删除 -->
+	<delete id="deleteById">
+		delete from t_user where id = #{id}
+	</delete>
+	
+	<!-- 根据参数分页查询 -->
+	<select id="findByParam" resultType="user">
+		select
+		t_user.id,
+		t_user.`name`,
+		t_user.`username`,
+		t_user.`tel`,
+		t_user.`enable`,
+		t_user.roleid as `role.id`,
+		t_role.`descn` as
+		`role.descn`
+		from t_user inner join t_role on
+		t_role.id = t_user.roleid
+		<where>
+			<if test="keyword != null and keyword != ''">
+				t_user.username like concat('%',#{keyword},'%') or
+				t_user.name like concat('%',#{keyword},'%')
+			</if>
+		</where>
+		order by t_user.id desc
+		limit ${start},${length}
+	</select>
+	<!-- 统计数量全部数量 -->
+	<select id="countAll" resultType="Long">
+		select count(1) from t_user
+	</select>
+	<!-- 统计过滤后的数量 -->
+	<select id="countByParam" resultType="Long">
+		select count(1) from t_user
+		<where>
+			<if test="keyword != null and keyword != ''">
+				username like concat('%',#{keyword},'%') or name like
+				concat('%',#{keyword},'%')
+			</if>
+		</where>
+	</select>
+	<!-- 查询所有 -->
+	<select id="findAll" resultType="user">
+		select
+		t_user.id,
+		t_user.`name`,
+		t_user.`username`,
+		t_user.`tel`,
+		t_user.`enable`,
+		t_user.roleid as
+		`role.id`,
+		t_role.`descn` as `role.descn`
+		from t_user inner join t_role
+		on
+		t_role.id = t_user.roleid
+	</select>
+</mapper>

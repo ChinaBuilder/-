@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		
+		http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<!-- 中央调度器 -->
+
+	<!-- 添加配置文件 -->
+	<context:property-placeholder location="classpath:config.properties" />
+
+
+	<!-- 自动扫描controller包里面对应的@controller 使用了默认的bean DefaultAnnotationHandlerMapping -->
+	<context:component-scan base-package="com.it.controller" />
+
+	<!-- 配置基于注解的驱动 访问url时候把参数也传递过去 -->
+	<mvc:annotation-driven>
+		<!-- 允许带.的path变量 -->
+		<mvc:path-matching registered-suffixes-only="true" />
+	</mvc:annotation-driven>
+
+
+	<!-- 对静态资源的处理 把static相对路径下面的静态资源映射到/static/路径下 -->
+	<mvc:resources mapping="/static/**" location="/static/" />
+	
+	<!-- 添加视图解析器 -->
+	<bean id="ViewReslove"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+</beans>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 修改首要命名空间为： 安全性命名空间 作用是：本文里面所有的bean 本来都应该配置secutrity:前缀的 现在不需要了 -->
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security.xsd">
+	<!-- 启动自动配置 并且启用SpEL表达式 -->
+	<!-- 放过静态资源 -->
+	<http pattern="/static/**" security="none"></http>
+	<http pattern="/login" security="none"></http>
+	<http pattern="/" security="none"></http>
+	<http auto-config="true" use-expressions="true">
+		<!-- 配置登录地址 -->
+		<form-login username-parameter="username"
+
+			password-parameter="password" login-page="/login"
+			login-processing-url="/login/check" authentication-failure-url="/login?login_error=t"
+			default-target-url="/home" always-use-default-target="true" />
+		<logout />
+		<intercept-url pattern="/admin/*" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/**"
+			access="hasAnyRole('ROLE_ADMIN','ROLE_USER')" />
+
+		<!-- 配置记住我功能 -->
+		<remember-me key="mingshiKey" token-validity-seconds="2419200" />
+		<!-- 禁止使用csrf -->
+		<csrf disabled="true" />
+	</http>
+
+	<!-- <user-service> <user name="tom" password="123" authorities="ROLE_USER"></user> 
+		<user name="admin" password="123" authorities="ROLE_ADMIN"></user> </user-service> -->
+
+	<!-- <authentication-manager> <authentication-provider> <user-service id="MyAuthenticationService"> 
+		<user name="tangsan" password="123" authorities="ROLE_USER,ROLE_ADMIN" /> 
+		</user-service> </authentication-provider> </authentication-manager> -->
+
+	<authentication-manager>
+		<authentication-provider>
+			<!-- 设置加密验证 -->
+			<password-encoder hash="md5" >
+			<salt-source system-wide="long"/>
+			</password-encoder>
+
+			<!-- 设置jdbc连接验证 -->
+			<jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="select username,password,true 
+		from t_user where username=?"
+				authorities-by-username-query="SELECT t_user.username, 
+		t_role.`name`  FROM t_user INNER JOIN t_role ON t_user.roleid = t_role.id 
+		WHERE t_user.username=?" />
+		</authentication-provider>
+	</authentication-manager>
+
+</beans:beans>

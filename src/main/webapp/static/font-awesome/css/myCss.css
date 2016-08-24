@@ -1,0 +1,27 @@
+
+.navbar {
+    height: 50px;
+    background-color: #2fffff;
+    line-height: 50px;
+    font-size: 20px;
+    text-align: center;
+
+}
+body{
+    margin: 0px;
+    font-family: "Lato", "Helvetica Neue", "Arial", Sans-Serif;
+    font-weight: 300;
+    font-size: 14px;
+    background-image: url("bg.jpg");
+}
+footer {
+    display: block;
+    margin-top: 20px;
+    background-color: rgba(0,0,0,0.3);
+    height: 40px;
+    border-radius: 3px;
+    line-height: 40px;
+}
+footer>div{
+    align-content: center;
+}
